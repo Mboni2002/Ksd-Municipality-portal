@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>KSD Business Licenses - Secure Login</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f0f4fa 0%, #e8edf2 100%);
+            color: #1e2f3e;
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* ========== LOADING BAR ========== */
+        .loading-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            z-index: 9999;
+            background: #e9ecef;
+        }
+
+        .loading-bar .progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #003366, #ffc107, #003366);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            transition: width 0.3s ease;
+            border-radius: 0 2px 2px 0;
+        }
+
+        .loading-bar .progress.complete {
+            width: 100% !important;
+            animation: none;
+            background: #28a745;
+            transition: width 0.5s ease;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(4px);
+            z-index: 9998;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #e9ecef;
+            border-top-color: #003366;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .loading-text {
+            margin-top: 20px;
+            font-weight: 600;
+            color: #003366;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background: linear-gradient(135deg, #002856 0%, #003d73 100%);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-header img {
+            height: 50px;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-header img:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-header h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        header nav {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        header nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+        }
+
+        header nav a:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-2px);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem 2rem;
+        }
+
+        /* login container */
+        .login-container {
+            background: white;
+            border-radius: 28px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 480px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .login-container:hover {
+            box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+            transform: translateY(-2px);
+        }
+
+        /* logo section */
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo h2 {
+            color: #002856;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .logo h2 i {
+            font-size: 2rem;
+            color: #0056b3;
+        }
+
+        .logo p {
+            color: #6c757d;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        /* form styling */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.6rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #002856;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+            color: #1e2f3e;
+            font-weight: 500;
+            outline: none;
+        }
+
+        input::placeholder {
+            color: #adb5bd;
+        }
+
+        input:focus {
+            border-color: #0056b3;
+            background-color: white;
+            box-shadow: 0 0 0 4px rgba(0,86,179,0.1);
+        }
+
+        input::placeholder {
+            color: #b9c3d0;
+            font-weight: 400;
+            font-size: 0.9rem;
+        }
+
+        /* login button */
+        .login-btn {
+            width: 100%;
+            padding: 0.95rem 1.2rem;
+            background: linear-gradient(135deg, #0056b3 0%, #003d73 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            box-shadow: 0 6px 15px rgba(0,86,179,0.25);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .login-btn:hover {
+            background: linear-gradient(135deg, #004494 0%, #002a4a 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(0,86,179,0.35);
+        }
+
+        .login-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* links section */
+        .links {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .links a {
+            text-decoration: none;
+            color: #0056b3;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            border-bottom: 1px solid transparent;
+        }
+
+        .links a:hover {
+            color: #003d73;
+            border-bottom-color: #003d73;
+        }
+
+        .links-divider {
+            color: #cbd5e1;
+            margin: 0 8px;
+        }
+
+        /* info box */
+        .info-box {
+            background: #f0f8ff;
+            border-left: 4px solid #0056b3;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: #1e2f3e;
+        }
+
+        .info-box strong {
+            color: #0056b3;
+        }
+
+        .info-box a {
+            color: #0056b3;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .info-box a:hover {
+            text-decoration: underline;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: #11212e;
+            color: #eef2f8;
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: auto;
+        }
+
+        .footer-icons {
+            margin-bottom: 1rem;
+        }
+
+        .footer-icons a {
+            color: white;
+            font-size: 1.8rem;
+            margin: 0 1rem;
+            transition: all 0.2s;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .footer-icons a:hover {
+            color: #5dade2;
+            transform: translateY(-2px);
+        }
+
+        .footer-content {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        /* responsive */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            header nav {
+                justify-content: center;
+            }
+
+            main {
+                padding: 2rem 1rem;
+            }
+
+            .login-container {
+                padding: 2rem 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 1.8rem 1.2rem;
+            }
+
+            .logo h2 {
+                font-size: 1.5rem;
+            }
+
+            input {
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .login-btn {
+                padding: 0.85rem 1rem;
+            }
+
+            .footer-icons a {
+                font-size: 1.4rem;
+                margin: 0 0.5rem;
+            }
+
+            header {
+                padding: 0.8rem 1rem;
+            }
+
+            .logo-header h1 {
+                font-size: 1.1rem;
+            }
+
+            .logo-header img {
+                height: 40px;
+            }
+
+            header nav a {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* accessibility */
+        a:focus-visible,
+        button:focus-visible,
+        input:focus-visible {
+            outline: 3px solid #0056b3;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ========== LOADING BAR ========== -->
+<div class="loading-bar" id="loadingBar">
+    <div class="progress" id="loadingProgress"></div>
+</div>
+
+<!-- ========== LOADING OVERLAY ========== -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Loading...</div>
+</div>
+
+<!-- ===== HEADER ===== -->
+<header>
+    <div class="logo-header">
+        <img src="Images/king-sabatha-dalindyebo-local-municipality_orig.jpg" alt="KSD Logo" onerror="this.style.display='none'">
+        <h1>KSD Business Portal</h1>
+    </div>
+    <nav>
+        <a href="index.html" onclick="handleNavigation(event, 'index.html')"><i class="bi bi-house-door"></i> Home</a>
+        <a href="terms.html" onclick="handleNavigation(event, 'terms.html')"><i class="bi bi-info-circle"></i> About</a>
+        <a href="register.html" onclick="handleNavigation(event, 'register.html')"><i class="bi bi-person-plus"></i> Register</a>
+    </nav>
+</header>
+
+<!-- ===== MAIN LOGIN SECTION ===== -->
+<main>
+    <div class="login-container">
+        <div class="logo">
+            <h2><i class="bi bi-lock-fill"></i> Login</h2>
+            <p>Access your KSD Business License Portal account</p>
+        </div>
+
+        <form action="login.php" method="POST" id="loginForm">
+            <div class="form-group">
+                <label for="username"><i class="bi bi-person"></i> Username</label>
+                <input type="text" id="username" name="username" required placeholder="Enter your username">
+            </div>
+
+            <div class="form-group">
+                <label for="password"><i class="bi bi-key"></i> Password</label>
+                <input type="password" id="password" name="password" required placeholder="Enter your password">
+            </div>
+
+            <button type="submit" class="login-btn" id="loginBtn"><i class="bi bi-arrow-right"></i> Sign In</button>
+
+            <div class="info-box">
+                <strong><i class="bi bi-info-circle"></i> New User?</strong> 
+                <a href="register.html" onclick="handleNavigation(event, 'register.html')"> Create an account</a>
+            </div>
+
+            <div class="links">
+                <a href="register.html" onclick="handleNavigation(event, 'register.html')"><i class="bi bi-person-check"></i> Create Account</a>
+                <span class="links-divider">•</span>
+                <a href="forgot_password.php" onclick="handleNavigation(event, 'forgot_password.php')"><i class="bi bi-question-circle"></i> Forgot Password?</a>
+            </div>
+        </form>
+    </div>
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+    <div class="footer-icons">
+        <a href="https://www.ksd.gov.za" target="_blank" title="Official Website"><i class="bi bi-globe"></i></a>
+        <a href="mailto:ksdcommunications@ksd.gov.za" title="Email us"><i class="bi bi-envelope-fill"></i></a>
+        <a href="tel:0474951037" title="Call us"><i class="bi bi-telephone-fill"></i></a>
+    </div>
+    <div class="footer-content">
+        <div style="margin-bottom: 0.5rem;">&copy; 2026 King Sabata Dalindyebo Municipality. All rights reserved.</div>
+        <div style="opacity: 0.7; font-size: 0.8rem;">Business Licensing Portal v2.0 | Secure & Encrypted</div>
+    </div>
+</footer>
+
+<script>
+    (function() {
+        // ========== LOADING BAR ==========
+        const loadingBar = document.getElementById('loadingBar');
+        const loadingProgress = document.getElementById('loadingProgress');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        // Show loading bar on page load
+        function showLoading() {
+            loadingOverlay.classList.add('active');
+            loadingProgress.style.width = '0%';
+            loadingProgress.className = 'progress';
+            
+            // Simulate progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 10;
+                if (progress > 90) {
+                    progress = 90;
+                    clearInterval(interval);
+                }
+                loadingProgress.style.width = progress + '%';
+            }, 200);
+            
+            return interval;
+        }
+
+        // Complete loading
+        function completeLoading(interval) {
+            clearInterval(interval);
+            loadingProgress.style.width = '100%';
+            loadingProgress.className = 'progress complete';
+            
+            setTimeout(() => {
+                loadingOverlay.classList.remove('active');
+                setTimeout(() => {
+                    loadingProgress.style.width = '0%';
+                    loadingProgress.className = 'progress';
+                }, 500);
+            }, 600);
+        }
+
+        // Handle navigation with loading
+        window.handleNavigation = function(event, url) {
+            if (event) event.preventDefault();
+            if (!url) return;
+            
+            // Show loading
+            const interval = showLoading();
+            
+            // Navigate after a small delay
+            setTimeout(() => {
+                window.location.href = url;
+            }, 300);
+        };
+
+        // Handle page load
+        let loadInterval = showLoading();
+        
+        window.addEventListener('load', function() {
+            completeLoading(loadInterval);
+        });
+
+        // Intercept all link clicks for loading bar
+        document.addEventListener('click', function(e) {
+            const link = e.target.closest('a');
+            if (link && link.href && !link.href.startsWith('#') && !link.href.includes('javascript:')) {
+                // Only intercept internal links
+                const currentDomain = window.location.origin;
+                const linkDomain = link.href.split('/')[2];
+                if (linkDomain === window.location.hostname || linkDomain === '') {
+                    // Don't intercept if it's a mailto or tel link
+                    if (link.href.startsWith('mailto:') || link.href.startsWith('tel:')) {
+                        return;
+                    }
+                    e.preventDefault();
+                    const url = link.href;
+                    const interval = showLoading();
+                    setTimeout(() => {
+                        window.location.href = url;
+                    }, 300);
+                }
+            }
+        });
+
+        // ========== FORM SUBMIT HANDLER ==========
+        const loginForm = document.getElementById('loginForm');
+        const loginBtn = document.getElementById('loginBtn');
+
+        if (loginForm && loginBtn) {
+            loginForm.addEventListener('submit', function(e) {
+                // Show loading overlay
+                const interval = showLoading();
+                
+                // Disable button and show loading state
+                loginBtn.disabled = true;
+                loginBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Signing in...';
+                
+                // Allow form to submit naturally
+                // Safety net: re-enable after 15 seconds if something goes wrong
+                setTimeout(function() {
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = '<i class="bi bi-arrow-right"></i> Sign In';
+                    completeLoading(interval);
+                }, 15000);
+            });
+        }
+
+        // Handle form submission success/failure (if page is loaded from cache)
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                if (loginBtn) {
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = '<i class="bi bi-arrow-right"></i> Sign In';
+                }
+                loadingOverlay.classList.remove('active');
+            }
+        });
+
+    })();
+</script>
+
+</body>
+</html>
