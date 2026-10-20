@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | KSD Municipality Business Portal</title>
+
+    <!-- Bootstrap Icons (matches Apply page) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Professional CSS - exactly matching the Apply page style -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f0f4fa;
+            color: #1e2f3e;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ========== LOADING BAR ========== */
+        .loading-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            z-index: 9999;
+            background: #e9ecef;
+        }
+
+        .loading-bar .progress {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #003366, #ffc107, #003366);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            transition: width 0.3s ease;
+            border-radius: 0 2px 2px 0;
+        }
+
+        .loading-bar .progress.complete {
+            width: 100% !important;
+            animation: none;
+            background: #28a745;
+            transition: width 0.5s ease;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(4px);
+            z-index: 9998;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #e9ecef;
+            border-top-color: #003366;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .loading-text {
+            margin-top: 20px;
+            font-weight: 600;
+            color: #003366;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== HEADER - identical to Apply ===== */
+        header {
+            background: #003366;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .Logo img {
+            height: 60px;
+            border-radius: 8px;
+        }
+
+        nav a {
+            color: white;
+            margin-left: 1rem;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        nav a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* ===== FORM CONTAINER - identical to Apply ===== */
+        .form-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.15);
+            padding: 2rem;
+            flex: 1;
+        }
+
+        h1, h2 {
+            color: #003366;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            border-left: 5px solid #003366;
+            padding-left: 1rem;
+        }
+
+        /* ===== FORM FIELDS - identical ===== */
+        label {
+            font-weight: 600;
+            margin-top: 1rem;
+            display: block;
+            color: #1e4663;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            margin-top: 0.3rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 16px;
+            font-size: 1rem;
+            transition: 0.2s;
+            background: #fefefe;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #003366;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0,51,102,0.1);
+        }
+
+        /* Radio group styling - clean & professional */
+        .role-group {
+            display: flex;
+            gap: 2rem;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .role-group label {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-weight: 500;
+            cursor: pointer;
+            background: #f8fafc;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            border: 1px solid #cbd5e1;
+            transition: all 0.2s;
+            margin-top: 0;
+        }
+        .role-group label:hover {
+            background: #eef2f8;
+            border-color: #003366;
+        }
+        .role-group input[type="radio"] {
+            width: auto;
+            margin-top: 0;
+            transform: scale(1.1);
+            accent-color: #003366;
+        }
+
+        /* Checkbox styling - matches Apply */
+        label input[type="checkbox"] {
+            width: auto;
+            margin-right: 0.75rem;
+            transform: scale(1.1);
+            vertical-align: middle;
+        }
+
+        .checkbox-container {
+            background: #f9fbfe;
+            padding: 1rem;
+            border-radius: 20px;
+            margin: 1.5rem 0;
+            border: 1px solid #e2edf5;
+        }
+        .checkbox-container label {
+            display: flex;
+            align-items: center;
+            margin-top: 0;
+            font-weight: 500;
+        }
+        .checkbox-container a {
+            color: #003366;
+            text-decoration: none;
+            font-weight: 700;
+            border-bottom: 1px solid #ffc107;
+        }
+        .checkbox-container a:hover {
+            color: #002244;
+        }
+
+        /* Employee number section with smooth reveal */
+        #employeeNumberGroup {
+            transition: all 0.25s ease;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        #employeeNumberGroup.show {
+            display: block;
+        }
+        .employee-field {
+            background: #fafcff;
+            border-radius: 20px;
+            padding: 0.2rem 0;
+        }
+
+        /* Error styling */
+        .input-error {
+            border-color: #dc3545 !important;
+            background-color: #fff9f9;
+        }
+        .error-message-custom {
+            color: #dc3545;
+            font-size: 0.75rem;
+            margin-top: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .required-hint {
+            font-size: 0.75rem;
+            color: #5a6e7c;
+            text-align: right;
+            margin-top: 1rem;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .form-row {
+            display: flex;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+        }
+        .form-row .form-group {
+            flex: 1;
+            min-width: 180px;
+        }
+        .required-star {
+            color: #e03a3a;
+            margin-left: 2px;
+        }
+
+        /* ===== BUTTONS - professional & unified (matching Apply) ===== */
+        .btn-primary {
+            background: #003366;
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #002244;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0,51,102,0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ===== FOOTER - FIXED ===== */
+        footer {
+            background: #11212e;
+            color: #eef2f8;
+            padding: 3rem 2rem 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: auto;
+        }
+
+        .footer-icons {
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-icons h2 {
+            color: white;
+            font-size: 1.2rem;
+            border-left: none;
+            padding-left: 0;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .footer-icons a {
+            color: white;
+            font-size: 1.8rem;
+            margin: 0 1rem;
+            transition: all 0.2s;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .footer-icons a:hover {
+            color: #5dade2;
+            transform: translateY(-2px);
+        }
+
+        .footer-content {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            padding-top: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .footer-content small {
+            display: block;
+            margin-top: 0.5rem;
+            opacity: 0.7;
+        }
+
+        .footer-content .heart {
+            color: #ff6b6b;
+        }
+
+        /* Responsive */
+        @media (max-width: 700px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .form-container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            .role-group {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .btn-primary {
+                width: 100%;
+            }
+            .footer-icons a {
+                margin: 0 0.7rem;
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ========== LOADING BAR ========== -->
+<div class="loading-bar" id="loadingBar">
+    <div class="progress" id="loadingProgress"></div>
+</div>
+
+<!-- ========== LOADING OVERLAY ========== -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Loading...</div>
+</div>
+
+<header>
+    <div class="Logo">
+        <img src="Images/king-sabatha-dalindyebo-local-municipality_orig.jpg" alt="KSD Logo" onerror="this.style.display='none'">
+    </div>
+    <nav>
+        <a href="index.html" onclick="handleNavigation(event, 'index.html')"><i class="bi bi-house"></i> Home</a>
+        <a href="login.html" onclick="handleNavigation(event, 'login.html')"><i class="bi bi-box-arrow-in-right"></i> Sign In</a>
+    </nav>
+</header>
+
+<div class="form-container">
+    <h1><i class="bi bi-person-plus-fill"></i> Register for e-Services</h1>
+    <p style="margin-bottom: 1.5rem; color: #4a627a;">Secure access to business licensing, renewals & municipal services</p>
+
+    <form id="registerForm" action="register.php" method="POST" enctype="multipart/form-data" novalidate>
+        <!-- Row: First Name + Last Name -->
+        <div class="form-row">
+            <div class="form-group">
+                <label>First Name <span class="required-star">*</span></label>
+                <input type="text" id="name" name="name" required placeholder="First Name" autocomplete="given-name">
+            </div>
+            <div class="form-group">
+                <label>Last Name <span class="required-star">*</span></label>
+                <input type="text" id="lastname" name="lastname" required placeholder="Last Name" autocomplete="family-name">
+            </div>
+        </div>
+
+        <!-- Row: ID Number + Mobile -->
+        <div class="form-row">
+            <div class="form-group">
+                <label>Identity Number (RSA) <span class="required-star">*</span></label>
+                <input type="text" id="idnum" name="idnum" placeholder="13-digit ID Number" autocomplete="off" maxlength="13">
+            </div>
+            <div class="form-group">
+                <label>Mobile Number <span class="required-star">*</span></label>
+                <input type="tel" id="cellnum" name="cellnum" required placeholder="0821234567" autocomplete="tel" maxlength="10">
+            </div>
+        </div>
+
+        <!-- Email Address -->
+        <div class="form-group">
+            <label>Email Address <span class="required-star">*</span></label>
+            <input type="email" id="email" name="email" required placeholder="your.name@example.com" autocomplete="email">
+        </div>
+
+        <!-- Residential / Business Address -->
+        <div class="form-group">
+            <label>Residential / Business Address <span class="required-star">*</span></label>
+            <input type="text" id="address" name="address" required placeholder="Street, suburb, city, code">
+        </div>
+
+        <!-- Row: Username + Password -->
+        <div class="form-row">
+            <div class="form-group">
+                <label>Username <span class="required-star">*</span></label>
+                <input type="text" id="username" name="username" required placeholder="Unique Username" autocomplete="username" minlength="4">
+            </div>
+            <div class="form-group">
+                <label>Password <span class="required-star">*</span></label>
+                <input type="password" id="password" name="password" required minlength="8" placeholder="Min 8 chars, 1 uppercase, 1 number" autocomplete="new-password">
+            </div>
+        </div>
+
+        <!-- Role Selection (Applicant / Officer) - styled like Apply page -->
+        <div class="form-group">
+            <label>Account Type <span class="required-star">*</span></label>
+            <div class="role-group" id="roleGroup">
+                <label><input type="radio" name="role" value="Applicant" required> <i class="bi bi-briefcase"></i> Applicant </label>
+              <!--  <label><input type="radio" name="role" value="Officer"> <i class="bi bi-person-badge"></i> License Officer</label> -->
+            </div>
+        </div>
+
+        <!-- Employee Number (shown only for Officer) -->
+        <div id="employeeNumberGroup" class="form-group">
+            <div class="employee-field">
+                <label>Employee Number <span class="required-star">*</span></label>
+                <input type="text" id="employee_number" name="employee_number" placeholder="e.g., KSD-001" autocomplete="off">
+                <span class="field-hint" style="font-size:0.75rem;color:#6a7f94;display:block;margin-top:0.2rem;">
+                    <i class="bi bi-info-circle"></i> Format: letters, numbers, hyphens (5-20 characters)
+                </span>
+            </div>
+        </div>
+
+        <!-- Terms & Conditions Checkbox (matching Apply declaration style) -->
+        <div class="checkbox-container">
+            <label>
+                <input type="checkbox" id="agree" name="agree" required>
+                I accept the <a href="terms.html" target="_blank">Terms of Service</a> and <a href="privacy.html" target="_blank">Privacy Notice</a> *
+            </label>
+        </div>
+
+        <!-- Submit Button - same class as Apply page Next/Submit -->
+        <button type="submit" class="btn-primary" id="submitBtn"><i class="bi bi-send-check"></i> Create Account & Proceed</button>
+        <div class="required-hint"><i class="bi bi-info-circle-fill"></i> Fields marked with * are mandatory. Your information is protected.</div>
+    </form>
+</div>
+
+<!-- ===== FOOTER - FIXED ===== -->
+<footer>
+    <div class="footer-icons">
+        <h2>Quick Links</h2>
+        <a href="https://www.ksd.gov.za" target="_blank" aria-label="Municipality website"><i class="bi bi-globe"></i></a>
+        <a href="mailto:ksdcommunications@ksd.gov.za" aria-label="Email us"><i class="bi bi-envelope-fill"></i></a>
+        <a href="tel:0474951037" aria-label="Call us"><i class="bi bi-telephone-fill"></i></a>
+        <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+        <a href="#" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
+        <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+    </div>
+    <div class="footer-content">
+        &copy; 2026 King Sabata Dalindyebo Municipality. All rights reserved.
+        <br>
+        <small>Built with <i class="bi bi-heart-fill heart"></i> for the KSD community</small>
+    </div>
+</footer>
+
+<script>
+    (function() {
+        // ========== LOADING BAR ==========
+        const loadingBar = document.getElementById('loadingBar');
+        const loadingProgress = document.getElementById('loadingProgress');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        // Show loading bar on page load
+        function showLoading() {
+            loadingOverlay.classList.add('active');
+            loadingProgress.style.width = '0%';
+            loadingProgress.className = 'progress';
+            
+            // Simulate progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 10;
+                if (progress > 90) {
+                    progress = 90;
+                    clearInterval(interval);
+                }
+                loadingProgress.style.width = progress + '%';
+            }, 200);
+            
+            return interval;
+        }
+
+        // Complete loading
+        function completeLoading(interval) {
+            clearInterval(interval);
+            loadingProgress.style.width = '100%';
+            loadingProgress.className = 'progress complete';
+            
+            setTimeout(() => {
+                loadingOverlay.classList.remove('active');
+                setTimeout(() => {
+                    loadingProgress.style.width = '0%';
+                    loadingProgress.className = 'progress';
+                }, 500);
+            }, 600);
+        }
+
+        // Handle navigation with loading
+        window.handleNavigation = function(event, url) {
+            if (event) event.preventDefault();
+            if (!url) return;
+            
+            // Show loading
+            const interval = showLoading();
+            
+            // Navigate after a small delay
+            setTimeout(() => {
+                window.location.href = url;
+            }, 300);
+        };
+
+        // Handle page load
+        let loadInterval = showLoading();
+        
+        window.addEventListener('load', function() {
+            completeLoading(loadInterval);
+        });
+
+        // Intercept all link clicks for loading bar
+        document.addEventListener('click', function(e) {
+            const link = e.target.closest('a');
+            if (link && link.href && !link.href.startsWith('#') && !link.href.includes('javascript:')) {
+                // Only intercept internal links
+                const currentDomain = window.location.origin;
+                const linkDomain = link.href.split('/')[2];
+                if (linkDomain === window.location.hostname || linkDomain === '') {
+                    e.preventDefault();
+                    const url = link.href;
+                    const interval = showLoading();
+                    setTimeout(() => {
+                        window.location.href = url;
+                    }, 300);
+                }
+            }
+        });
+
+        // ========== DOM Elements ==========
+        const applicantRadio = document.querySelector('input[value="Applicant"]');
+        const officerRadio = document.querySelector('input[value="Officer"]');
+        const employeeGroup = document.getElementById('employeeNumberGroup');
+        const employeeInput = document.getElementById('employee_number');
+        const registerForm = document.getElementById('registerForm');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Toggle employee field based on role selection
+        function toggleEmployeeField() {
+            if (officerRadio && officerRadio.checked) {
+                employeeGroup.classList.add('show');
+                if (employeeInput) employeeInput.required = true;
+            } else {
+                employeeGroup.classList.remove('show');
+                if (employeeInput) {
+                    employeeInput.required = false;
+                    employeeInput.value = '';
+                }
+                // clear any errors on hidden field
+                if (employeeInput) employeeInput.classList.remove('input-error');
+                const parent = employeeInput?.parentElement;
+                const err = parent?.querySelector('.error-message-custom');
+                if (err) err.remove();
+            }
+        }
+
+        if (applicantRadio && officerRadio) {
+            applicantRadio.addEventListener('change', toggleEmployeeField);
+            officerRadio.addEventListener('change', toggleEmployeeField);
+            toggleEmployeeField(); // initial state
+        }
+
+        // ========== VALIDATION FUNCTIONS (SA ID, Phone, Email) ==========
+        function validateSouthAfricanID(id) {
+            if (!/^\d{13}$/.test(id)) return false;
+            const year = parseInt(id.substring(0,2),10);
+            const month = parseInt(id.substring(2,4),10);
+            const day = parseInt(id.substring(4,6),10);
+            const currentYear = new Date().getFullYear() % 100;
+            const fullYear = (year <= currentYear ? 2000 + year : 1900 + year);
+            const dateObj = new Date(fullYear, month-1, day);
+            if (dateObj.getFullYear() !== fullYear || dateObj.getMonth() !== month-1 || dateObj.getDate() !== day) return false;
+            if (month < 1 || month > 12) return false;
+            if (day < 1 || day > 31) return false;
+            // Luhn checksum for SA ID
+            let sum = 0;
+            for (let i = 0; i < 12; i++) {
+                let digit = parseInt(id.charAt(i),10);
+                if (i % 2 === 1) {
+                    let double = digit * 2;
+                    sum += double > 9 ? double - 9 : double;
+                } else {
+                    sum += digit;
+                }
+            }
+            const checkDigit = parseInt(id.charAt(12),10);
+            const calculated = (10 - (sum % 10)) % 10;
+            return calculated === checkDigit;
+        }
+
+        function validatePhoneNumber(phone) {
+            const cleaned = phone.replace(/\s+/g, '');
+            return /^0[6-8][0-9]{8}$/.test(cleaned);
+        }
+
+        function validateEmail(email) {
+            return /^[^\s@]+@([^\s@]+\.)+[^\s@]+$/.test(email);
+        }
+
+        // Helper: Show error below field
+        function showFieldError(field, message) {
+            if (!field) return;
+            const parent = field.parentElement;
+            let existing = parent.querySelector('.error-message-custom');
+            if (existing) existing.remove();
+            field.classList.add('input-error');
+            const errSpan = document.createElement('span');
+            errSpan.className = 'error-message-custom';
+            errSpan.innerHTML = `<i class="bi bi-exclamation-triangle-fill" style="font-size:0.7rem;"></i> ${message}`;
+            parent.appendChild(errSpan);
+        }
+
+        function clearFieldError(field) {
+            if (!field) return;
+            field.classList.remove('input-error');
+            const parent = field.parentElement;
+            const err = parent.querySelector('.error-message-custom');
+            if (err) err.remove();
+        }
+
+        // Main form validation
+        function validateForm() {
+            let isValid = true;
+            // Clear previous errors globally
+            document.querySelectorAll('.input-error').forEach(f => f.classList.remove('input-error'));
+            document.querySelectorAll('.error-message-custom').forEach(e => e.remove());
+
+            // First Name
+            const name = document.getElementById('name');
+            if (!name.value.trim()) { showFieldError(name, 'First name required'); isValid = false; } else { clearFieldError(name); }
+
+            // Last Name
+            const lastname = document.getElementById('lastname');
+            if (!lastname.value.trim()) { showFieldError(lastname, 'Last name required'); isValid = false; } else { clearFieldError(lastname); }
+
+            // ID Number
+            const idnum = document.getElementById('idnum');
+            if (!idnum.value.trim()) { showFieldError(idnum, 'Identity number required'); isValid = false; }
+            else if (!validateSouthAfricanID(idnum.value.trim())) { showFieldError(idnum, 'Enter a valid 13-digit SA ID number'); isValid = false; }
+            else { clearFieldError(idnum); }
+
+            // Mobile Number
+            const cellnum = document.getElementById('cellnum');
+            if (!cellnum.value.trim()) { showFieldError(cellnum, 'Mobile number required'); isValid = false; }
+            else if (!validatePhoneNumber(cellnum.value.trim())) { showFieldError(cellnum, 'Valid SA mobile: 0821234567'); isValid = false; }
+            else { clearFieldError(cellnum); }
+
+            // Email
+            const email = document.getElementById('email');
+            if (!email.value.trim()) { showFieldError(email, 'Email address required'); isValid = false; }
+            else if (!validateEmail(email.value.trim())) { showFieldError(email, 'Use a valid email format (name@domain.com)'); isValid = false; }
+            else { clearFieldError(email); }
+
+            // Address
+            const address = document.getElementById('address');
+            if (!address.value.trim()) { showFieldError(address, 'Physical address required'); isValid = false; } else { clearFieldError(address); }
+
+            // Username
+            const username = document.getElementById('username');
+            if (!username.value.trim()) { showFieldError(username, 'Username required'); isValid = false; }
+            else if (username.value.trim().length < 4) { showFieldError(username, 'Username must be at least 4 characters'); isValid = false; }
+            else { clearFieldError(username); }
+
+            // Password
+            const password = document.getElementById('password');
+            if (!password.value) { showFieldError(password, 'Password required'); isValid = false; }
+            else if (password.value.length < 8) { showFieldError(password, 'Password must be 8+ characters'); isValid = false; }
+            else if (!/[A-Z]/.test(password.value)) { showFieldError(password, 'Password must contain at least 1 uppercase letter'); isValid = false; }
+            else if (!/[0-9]/.test(password.value)) { showFieldError(password, 'Password must contain at least 1 number'); isValid = false; }
+            else { clearFieldError(password); }
+
+            // Role selection validation
+            const selectedRole = document.querySelector('input[name="role"]:checked');
+            const roleGroupContainer = document.getElementById('roleGroup');
+            let existingRoleErr = roleGroupContainer.parentElement.querySelector('.error-message-custom');
+            if (!selectedRole) {
+                if (!existingRoleErr) {
+                    const errSpan = document.createElement('span');
+                    errSpan.className = 'error-message-custom';
+                    errSpan.style.marginTop = '0.2rem';
+                    errSpan.innerHTML = '<i class="bi bi-exclamation-diamond"></i> Please select Applicant or License Officer';
+                    roleGroupContainer.parentElement.appendChild(errSpan);
+                }
+                isValid = false;
+            } else {
+                if (existingRoleErr) existingRoleErr.remove();
+            }
+
+            // Officer employee number validation
+            if (officerRadio && officerRadio.checked) {
+                const empValue = employeeInput.value.trim();
+                if (!empValue) {
+                    showFieldError(employeeInput, 'Employee number is required for License Officers');
+                    isValid = false;
+                } else if (empValue.length < 5 || !/^[A-Z0-9\-]{5,20}$/i.test(empValue)) {
+                    showFieldError(employeeInput, 'Enter a valid employee ID (5-20 chars, letters, numbers, hyphens)');
+                    isValid = false;
+                } else {
+                    clearFieldError(employeeInput);
+                }
+            }
+
+            // Terms checkbox
+            const agreeChk = document.getElementById('agree');
+            const chkContainer = document.querySelector('.checkbox-container');
+            let existingChkErr = chkContainer.querySelector('.error-message-custom');
+            if (!agreeChk.checked) {
+                if (!existingChkErr) {
+                    const errSpan = document.createElement('span');
+                    errSpan.className = 'error-message-custom';
+                    errSpan.style.marginTop = '0.5rem';
+                    errSpan.innerHTML = '<i class="bi bi-check-circle"></i> You must accept the Terms to register';
+                    chkContainer.appendChild(errSpan);
+                }
+                isValid = false;
+            } else {
+                if (existingChkErr) existingChkErr.remove();
+            }
+
+            return isValid;
+        }
+
+        // Real-time blur validation for key fields (nice UX)
+        document.getElementById('idnum')?.addEventListener('blur', function() {
+            if (this.value.trim() && !validateSouthAfricanID(this.value.trim())) showFieldError(this, 'Invalid SA ID (13 digits, valid checksum)');
+            else if (this.value.trim()) clearFieldError(this);
+        });
+        document.getElementById('cellnum')?.addEventListener('blur', function() {
+            if (this.value.trim() && !validatePhoneNumber(this.value.trim())) showFieldError(this, 'Use SA format: 0821234567');
+            else if (this.value.trim()) clearFieldError(this);
+        });
+        document.getElementById('email')?.addEventListener('blur', function() {
+            if (this.value.trim() && !validateEmail(this.value.trim())) showFieldError(this, 'Valid email required');
+            else if (this.value.trim()) clearFieldError(this);
+        });
+        document.getElementById('username')?.addEventListener('blur', function() {
+            if (this.value.trim() && this.value.trim().length < 4) showFieldError(this, 'Username minimum 4 characters');
+            else if (this.value.trim()) clearFieldError(this);
+        });
+        document.getElementById('password')?.addEventListener('blur', function() {
+            if (this.value && this.value.length < 8) showFieldError(this, 'Password must be at least 8 characters');
+            else if (this.value && !/[A-Z]/.test(this.value)) showFieldError(this, 'Password must contain at least 1 uppercase letter');
+            else if (this.value && !/[0-9]/.test(this.value)) showFieldError(this, 'Password must contain at least 1 number');
+            else if (this.value) clearFieldError(this);
+        });
+
+        // Limit ID number to 13 digits
+        document.getElementById('idnum')?.addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, '').slice(0, 13);
+        });
+
+        // Limit phone to 10 digits
+        document.getElementById('cellnum')?.addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, '').slice(0, 10);
+        });
+
+        // ========== Form submission handler ==========
+        registerForm.addEventListener('submit', function(e) {
+            // Reset button state first (in case of multiple submissions)
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="bi bi-send-check"></i> Create Account & Proceed';
+            
+            if (!validateForm()) {
+                e.preventDefault();
+                const firstError = document.querySelector('.input-error');
+                if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Re-enable button if validation fails
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="bi bi-send-check"></i> Create Account & Proceed';
+            } else {
+                // Show loading overlay
+                const interval = showLoading();
+                
+                // Disable button and show loading state
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Registering, please wait...';
+                
+                // Allow form to submit naturally to register.php
+                // Safety net: re-enable after 15 seconds if something goes wrong
+                setTimeout(function() {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="bi bi-send-check"></i> Create Account & Proceed';
+                    completeLoading(interval);
+                }, 15000);
+            }
+        });
+
+        // Handle form submission success/failure (if page is loaded from cache)
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="bi bi-send-check"></i> Create Account & Proceed';
+                loadingOverlay.classList.remove('active');
+            }
+        });
+
+    })();
+</script>
+
+</body>
+</html>
