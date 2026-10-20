@@ -1,0 +1,213 @@
+ body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+       /* HEADER */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #003366;
+    padding: 15px 40px;
+}
+
+/* LOGO */
+.Logo img {
+    width: 80px;
+    height: auto;
+    border-radius: 5px;
+}
+
+/* NAVIGATION */
+nav a {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 20px;
+    font-weight: bold;
+    transition: 0.3s;
+    
+}
+
+nav a:hover {
+    color: #00c6ff;
+}
+
+        fieldset {
+    width: 90%;          /* increase width */
+    max-width: 900px;    /* prevent it from becoming too wide on large screens */
+    margin: 40px auto;
+    padding: 30px;
+    border: 2px solid #003366;
+    background-color: #fff;
+    border-radius: 8px;
+}
+
+
+
+/* FORM CONTAINER */
+form {
+    background: #fff;
+    max-width: 650px;
+    margin: 50px auto;
+    padding: 25px 30px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* TITLE */
+h1 {
+    text-align: center;
+    color: #003366;
+    margin-bottom: 20px;
+}
+
+/* FORM GROUP */
+form div {
+    margin-bottom: 15px;
+}
+
+/* LABELS */
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* INPUT FIELDS */
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+/* INPUT FOCUS EFFECT */
+input:focus {
+    border-color: #0077cc;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0,119,204,0.3);
+}
+
+
+/* BUTTON CONTAINER (NEW - helps alignment) */
+.form-buttons {
+    display: flex;
+    gap: 10px;              /* space between buttons */
+    margin-top: 15px;
+}
+
+/* BUTTON */
+button {
+    flex: 1;                /* makes buttons equal size */
+    padding: 12px;
+    background: #003366;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* BUTTON HOVER */
+button:hover {
+    background: #0059b3;
+}
+
+/* OPTIONAL SECOND BUTTON STYLE  */
+button.secondary {
+    background: #ccc;
+    color: #333;
+}
+
+button.secondary:hover {
+    background: #999;
+}
+
+
+footer {
+    background-color: #003366;
+    color: #fff;
+    padding: 20px 5%;
+    margin-top: 60px;
+    width: 100%;
+}
+
+.timeline-vertical.centered {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.footer-icons {
+    margin-bottom: 1rem;
+}
+
+.footer-icons h2 {
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+    color: #ffcc00;
+    border: none;
+    padding: 0;
+    margin-left: 0;
+}
+
+.footer-icons a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.15);
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin: 0 0.6rem;
+    color: white;
+    font-size: 1.4rem;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.footer-icons a:hover {
+    background: #ffcc00;
+    color: #003366;
+    transform: scale(1.05);
+}
+
+footer div:last-child {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    margin-top: 12px;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+        padding: 15px 20px;
+    }
+    nav {
+        justify-content: center;
+    }
+    nav a {
+        margin: 0 8px;
+        font-size: 0.9rem;
+    }
+
+    .footer-icons a {
+        width: 38px;
+        height: 38px;
+        font-size: 1.2rem;
+        margin: 0 0.4rem;
+    }
+}
