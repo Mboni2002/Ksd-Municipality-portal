@@ -1,0 +1,316 @@
+/* ==================== RESET & BASE ==================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background-color: #f5f7fa;
+    color: #333;
+}
+
+/* ==================== HEADER ==================== */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #004080;
+    padding: 15px 40px;
+}
+
+.Logo img {
+    width: 80px;
+    height: auto;
+    border-radius: 5px;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 20px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+nav a:hover {
+    color: #00c6ff;
+}
+
+/* ==================== HERO BANNER (with slideshow + animations) ==================== */
+.hero-banner {
+    background: linear-gradient(rgba(0, 51, 102, 0.6), rgba(0, 51, 102, 0.6)),
+                url('https://tse4.mm.bing.net/th/id/OIP.feyA9x10aPIPCg_BJYmorwHaEK?rs=1&pid=ImgDetMain&o=7&rm=3') center/cover no-repeat;
+    transition: background-image 0.8s ease-in-out;
+    height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    margin-bottom: 3rem;
+    animation: slowZoom 20s ease-in-out infinite alternate;
+}
+
+/* NEW: Keyframes for slow background zoom */
+@keyframes slowZoom {
+    0% {
+        background-size: 100%;
+    }
+    100% {
+        background-size: 120%;
+    }
+}
+
+/* NEW: Text fade + slide-up animation */
+.hero-content {
+    max-width: 800px;
+    padding: 1rem;
+    animation: fadeSlideUp 10s ease-out;
+}
+
+@keyframes fadeSlideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+/* NEW: Pulsing button animation to attract attention */
+.hero-btn {
+    background-color: #ffcc00;
+    color: #003366;
+    padding: 0.8rem 2rem;
+    border-radius: 40px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.2s;
+    display: inline-block;
+    animation: gentlePulse 2s infinite;
+}
+
+.hero-btn:hover {
+    background-color: white;
+    color: #003366;
+    animation: none; /* Stop pulsing on hover */
+    transform: scale(1.05);
+}
+
+@keyframes gentlePulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 204, 0, 0.7);
+    }
+    70% {
+        transform: scale(1.02);
+        box-shadow: 0 0 0 12px rgba(255, 204, 0, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 204, 0, 0);
+    }
+}
+
+/* ==================== IMAGE CARDS SECTION ==================== */
+.image-cards {
+    padding: 2rem 5%;
+    background-color: #f8fafc;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2rem;
+    color: #003366;
+    margin-bottom: 2rem;
+}
+
+.cards-container {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    width: 300px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+}
+
+.card h3 {
+    margin: 1rem 1rem 0.5rem;
+    color: #003366;
+}
+
+.card p {
+    margin: 0 1rem 1rem;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.card-link {
+    display: inline-block;
+    margin: 0 1rem 1.5rem;
+    color: #ff6600;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.card-link:hover {
+    text-decoration: underline;
+}
+
+/* ==================== LOCATION HEADING & MAP ==================== */
+h2:not(.section-title) {
+    margin: 2rem 0 0 5%;
+    font-size: 1.8rem;
+    color: #003366;
+    border-left: 5px solid #ffcc00;
+    padding-left: 1rem;
+}
+
+iframe {
+    display: block;
+    width: 90%;
+    margin: 1rem auto 2rem auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* ==================== FOOTER ==================== */
+footer {
+    background-color: #003366;
+    color: #fff;
+    padding: 20px 5%;
+    margin-top: 60px;
+    width: 100%;
+}
+
+.timeline-vertical.centered {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.footer-icons {
+    margin-bottom: 1rem;
+}
+
+.footer-icons h2 {
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+    color: #ffcc00;
+    border: none;
+    padding: 0;
+    margin-left: 0;
+}
+
+.footer-icons a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.15);
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin: 0 0.6rem;
+    color: white;
+    font-size: 1.4rem;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.footer-icons a:hover {
+    background: #ffcc00;
+    color: #003366;
+    transform: scale(1.05);
+}
+
+footer div:last-child {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    margin-top: 12px;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+        padding: 15px 20px;
+    }
+
+    nav {
+        margin-top: 0;
+    }
+
+    nav a {
+        margin: 0 10px;
+    }
+
+    .hero-banner {
+        height: 400px;
+    }
+
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+    }
+
+    .card {
+        width: 100%;
+        max-width: 350px;
+    }
+
+    h2:not(.section-title) {
+        font-size: 1.5rem;
+        margin-left: 5%;
+    }
+
+    iframe {
+        width: 90%;
+        height: 280px;
+    }
+
+    .footer-icons a {
+        width: 38px;
+        height: 38px;
+        font-size: 1.2rem;
+        margin: 0 0.4rem;
+    }
+}
